@@ -7,7 +7,7 @@ URL = 'https://raw.githubusercontent.com/elastic/examples/master/Common%20Data%2
 request = urllib.request.urlopen(URL)
 
 try:
-    # connect to postgre database
+    # Подключение к БД
     connection = psycopg2.connect(
         user="postgres",
         password="0220",
@@ -17,24 +17,25 @@ try:
 
     connection.set_isolation_level(ISOLATION_LEVEL_AUTOCOMMIT)
 
-    # Cursor for performing database operations
+    # Курсор для выполнения операций с БД
     cursor = connection.cursor()
 
-    for row in request:
-        data = row.decode().strip().split()
+    # Использование индексов обусловлено тем, что у входных данных нет единого разделителя. 
+    for row in request: 
+        data = row.decode().strip().split() # Убирает лишние символы и пробелы.
         ip = data[0]
         time = data[3] + data[4]
         user_request = data[5] + data[6] + data[7]
         error_code = data[8] + ' ' + data[9]
         system_info = ''.join(data[11::])
 
-        # Insert
+        # Вставка
         insert_query = \
             f"""INSERT INTO logs (IP, TIME, REQUEST, ERROR_CODE, SYSTEM_INFO) VALUES (
             '{ip}', '{time}', '{user_request}', '{error_code}', '{system_info}')"""
 
         cursor.execute(insert_query)
-        connection.commit()
+    connection.commit()
 
 except (Exception, Error) as error:
     print("Ошибка.", error)
