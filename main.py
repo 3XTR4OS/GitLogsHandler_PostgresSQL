@@ -17,10 +17,10 @@ try:
 
     connection.set_isolation_level(ISOLATION_LEVEL_AUTOCOMMIT)
 
-    # Курсор для выполнения операций с БД
+    # Cursor for performing database operations
     cursor = connection.cursor()
 
-    # Использование индексов обусловлено тем, что у входных данных нет единого разделителя. 
+    # The use of indexes is due to the fact that the input data does not have a single separator.
     for row in request: 
         data = row.decode().strip().split() # Убирает лишние символы и пробелы.
         ip = data[0]
@@ -29,7 +29,6 @@ try:
         error_code = data[8] + ' ' + data[9]
         system_info = ''.join(data[11::])
 
-        # Вставка
         insert_query = \
             f"""INSERT INTO logs (IP, TIME, REQUEST, ERROR_CODE, SYSTEM_INFO) VALUES (
             '{ip}', '{time}', '{user_request}', '{error_code}', '{system_info}')"""
